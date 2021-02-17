@@ -9,12 +9,20 @@ $nameErr = $emailErr = $streetErr = $streetnumberErr = $cityErr = $zipcodeErr = 
 $name = $email = $street = $streetnumber = $city = $zipcode = "";
 
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    function check($data)
+    {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data, ENT_NOQUOTES, "UTF-8");
+        return $data;
+    }
+
     if (empty($_POST["name"])) {
         $nameErr = "Name is required";
     } else {
         $name = check($_POST["name"]);
+        $_SESSION["name"] = $name;
         if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
             $nameErr = "* Only letters and white space allowed";
         }
@@ -24,6 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $emailErr = "Email is required";
     } else {
         $email = check($_POST["email"]);
+        $_SESSION["email"] = $email;
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "* Invalid email format";
         }
@@ -33,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $streetErr = "Street is required";
     } else {
         $street = check($_POST["street"]);
+        $_SESSION["street"] = $street;
         if (!preg_match("/^[a-zA-Z-' ]*$/", $street)) {
             $streetErr = "* Only letters please";
         }
@@ -40,18 +50,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($_POST["streetnumber"])) {
         $streetnumberErr = "Number is required";
+    } elseif (is_numeric($_POST["streetnumber"])) {
+        $streetnumber = check($_POST["streetnumber"]);
+        $_SESSION["streetnumber"] = $streetnumber;
     } else {
-        if ((is_numeric($streetnumber)) and (preg_match("/^[0-9]{1,4}$/", $streetnumber))) {
-            $streetnumber = check($_POST["streetnumber"]);
-        } else {
-            $streetnumberErr = "* Please enter a maximum of 4 numbers, no letters";
-        }
+        $streetnumberErr = "* Only numbers please";
     }
-
     if (empty($_POST["city"])) {
         $cityErr = "City is required";
     } else {
         $city = check($_POST["city"]);
+        $_SESSION["city"] = $city;
         if (!preg_match("/^[a-zA-Z-' ]*$/", $city)) {
             $cityErr = "* Only letters and white space allowed";
         }
@@ -59,20 +68,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($_POST["zipcode"])) {
         $zipcodeErr = "Zipcode is required";
+    } elseif (is_numeric(($_POST["zipcode"]))) {
+        $zipcode = check($_POST["zipcode"]);
+        $_SESSION["zipcode"] = $zipcode;
     } else {
-        if ((is_numeric($zipcode)) and (preg_match("/^[0-9]{1,4}$/", $zipcode))) {
-            $zipcode = check($_POST["zipcode"]);
-        } else {
-            $zipcodeErr = "* Please enter a maximum of 4 numbers, no letters";
-        }
-    }
-    function check ($data){
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data, ENT_NOQUOTES, "UTF-8");
-        return $data;
+        $zipcodeErr = "* Only numbers please";
     }
 }
+
 
 function whatIsHappening()
 {
@@ -85,24 +88,41 @@ function whatIsHappening()
     echo '<h2>$_SESSION</h2>';
     var_dump($_SESSION);
 }
+
 whatIsHappening();
 
 //your products with their price.
-$products = [
-    ['name' => 'Club Ham', 'price' => 3.20],
-    ['name' => 'Club Cheese', 'price' => 3],
-    ['name' => 'Club Cheese & Ham', 'price' => 4],
-    ['name' => 'Club Chicken', 'price' => 4],
-    ['name' => 'Club Salmon', 'price' => 5]
-];
+if (isset($_GET["?food=0"])) {
+    $products = [
+        ['name' => 'Cola', 'price' => 2],
+        ['name' => 'Fanta', 'price' => 2],
+        ['name' => 'Sprite', 'price' => 2],
+        ['name' => 'Ice-tea', 'price' => 3],
+    ];
+}elseif (isset($_GET["?food=1"])) {
+    $products = [
+        ['name' => 'Cola', 'price' => 2],
+        ['name' => 'Fanta', 'price' => 2],
+        ['name' => 'Sprite', 'price' => 2],
+        ['name' => 'Ice-tea', 'price' => 3],
+    ];
+}else {
+    $products = [
+        ['name' => 'Club Ham', 'price' => 3.20],
+        ['name' => 'Club Cheese', 'price' => 3],
+        ['name' => 'Club Cheese & Ham', 'price' => 4],
+        ['name' => 'Club Chicken', 'price' => 4],
+        ['name' => 'Club Salmon', 'price' => 5]
+    ];
+}
 
-$products = [
-    ['name' => 'Cola', 'price' => 2],
-    ['name' => 'Fanta', 'price' => 2],
-    ['name' => 'Sprite', 'price' => 2],
-    ['name' => 'Ice-tea', 'price' => 3],
-];
 
-$totalValue = 0;
+$totalValue = "";
+foreach ($products as $i => $product) {
+    if (isset($_POST[$product[$i]])) {
+        $totalValue .= $product[$i]["price"];
+    }
+}
+setcookie( "order" , $totalValue, time() + 60);
 
 require 'form-view.php';
