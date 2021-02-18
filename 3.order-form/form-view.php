@@ -41,14 +41,14 @@
                     <label for="street">Street:</label>
                     <input type="text" name="street" id="street" class="form-control"
                            value="<?php echo isset($_POST["street"]) ? $_SESSION["street"] : ''; ?>">
-                    <span style="color : red"><?php echo $streetErr ?></span>
+                    <span style="color : red"><?php echo $street_Err ?></span>
 
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="streetnumber">Street number:</label>
-                    <input type="text" id="streetnumber" name="streetnumber" class="form-control"
-                           value="<?php echo isset($_POST["streetnumber"]) ? $_SESSION["streetnumber"] : ''; ?>">
-                    <span style="color : red"><?php echo $streetnumberErr ?></span>
+                    <label for="street_number">Street number:</label>
+                    <input type="text" id="street_number" name="street_number" class="form-control"
+                           value="<?php echo isset($_POST["street_number"]) ? $_SESSION["street_number"] : ''; ?>">
+                    <span style="color : red"><?php echo $street_number_Err ?></span>
                 </div>
             </div>
             <div class="form-row">
@@ -56,13 +56,13 @@
                     <label for="city">City:</label>
                     <input type="text" id="city" name="city" class="form-control"
                            value="<?php echo isset($_POST["city"]) ? $_SESSION["city"] : ''; ?>">
-                    <span style="color : red"><?php echo $cityErr ?></span>
+                    <span style="color : red"><?php echo $city_Err ?></span>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="zipcode">Zipcode</label>
-                    <input type="text" id="zipcode" name="zipcode" class="form-control"
-                           value="<?php echo isset($_POST["zipcode"]) ? $_SESSION["zipcode"] : ''; ?>">
-                    <span style="color : red"><?php echo $zipcodeErr ?></span>
+                    <label for="zip_code">Zipcode</label>
+                    <input type="text" id="zip_code" name="zip_code" class="form-control"
+                           value="<?php echo isset($_POST["zip_code"]) ? $_SESSION["zip_code"] : ''; ?>">
+                    <span style="color : red"><?php echo $zip_code_Err ?></span>
                 </div>
             </div>
         </fieldset>
@@ -82,10 +82,11 @@
             Express delivery (+ 5 EUR)
         </label>
 
-        <button type="submit" class="btn btn-primary">Order!</button>
+        <button type="submit" class="btn btn-primary" action="" >Order!</button>
     </form>
 
-    <footer>You already ordered <strong>&euro; <?php echo $totalValue ?></strong> in food and drinks.</footer>
+    <footer>You already ordered <strong>&euro; <?php echo $totalValue ?></strong> in food and drinks.
+    It will be at your location in <?php echo $time  ?> </footer>
 </div>
 
 <style>
