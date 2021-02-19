@@ -29,6 +29,7 @@
                 <label for="email">E-mail:</label>
                 <input type="text" id="email" name="email" class="form-control"
                        value="<?php echo isset($_POST["email"]) ? $_SESSION["email"] : ''; ?>"/>
+                <span style="color : red"><?php echo $email_Err ?></span>
             </div>
             <div></div>
         </div>
@@ -85,8 +86,8 @@
         <button type="submit" class="btn btn-primary" action="" >Order!</button>
     </form>
 
-    <footer>You already ordered <strong>&euro; <?php echo $totalValue ?></strong> in food and drinks.
-    It will be at your location in <?php echo $time  ?> </footer>
+    <footer>You already ordered <strong>&euro; <?php echo isset($totalValue) ? $totalValue :"" ?></strong> in food and drinks.<?php echo isset($time)? $time:"" ?></footer>
+
 </div>
 
 <style>

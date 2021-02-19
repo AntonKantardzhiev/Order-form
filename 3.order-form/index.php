@@ -4,7 +4,7 @@ declare(strict_types=1);
 //we are going to use session variables so we need to enable sessions
 
 session_start();
-
+const zip = 4;
 $name_Err = $email_Err = $street_Err = $street_number_Err = $city_Err = $zip_code_Err = "";
 $name = $email = $street = $street_number = $city = $zip_code = "";
 
@@ -33,6 +33,9 @@ if (!isset($_GET["food"])) {
     ];
 }
 
+
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function check(string $data)
     {
@@ -45,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["name"])) {
         $name_Err = "Name is required";
     } else if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
-        $name_Err = "* Only letters and white space allowed";
+        $name_Err = "* Invalid name";
     } else {
         $name = check($_POST["name"]);
         $_SESSION["name"] = $name;
@@ -53,8 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($_POST["email"])) {
         $email_Err = "Email is required";
-    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $email_Err = "* Invalid email format";
+    } else if (!filter_var((check($_POST["email"])), FILTER_VALIDATE_EMAIL)) {
+        $email_Err = "* Invalid email ";
     } else {
         $email = check($_POST["email"]);
         $_SESSION["email"] = $email;
@@ -63,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["street"])) {
         $street_Err = "Street is required";
     } else if (!preg_match("/^[a-zA-Z-' ]*$/", $street)) {
-        $street_Err = "* Only letters please";
+        $street_Err = "* Invalid street name";
     } else {
         $street = check($_POST["street"]);
         $_SESSION["street"] = $street;
@@ -75,13 +78,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $street_number = check($_POST["street_number"]);
         $_SESSION["street_number"] = $street_number;
     } else {
-        $street_number_Err = "* Only numbers please";
+        $street_number_Err = "* Invalid street number";
     }
 
     if (empty($_POST["city"])) {
         $city_Err = "City is required";
     } else if (!preg_match("/^[a-zA-Z-' ]*$/", $city)) {
-        $city_Err = "* Only letters and white space allowed";
+        $city_Err = "* Invalid city";
     } else {
         $city = check($_POST["city"]);
         $_SESSION["city"] = $city;
@@ -89,21 +92,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($_POST["zip_code"])) {
         $zip_code_Err = "Zipcode is required";
-    } else if (is_numeric(($_POST["zip_code"]))) {
+    } else if (is_numeric(($_POST["zip_code"]))&&(strlen($_POST["zip_code"])== zip)) {
         $zip_code = check($_POST["zip_code"]);
         $_SESSION["zip_code"] = $zip_code;
     } else {
-        $zip_code_Err = "* Only numbers please";
+        $zip_code_Err = "* Invalid zip";
     }
 }
-date_default_timezone_set("Europe/Brussels");
 
-if (isset($_POST["products"],$_POST["express_delivery"])){
-    $express_delivery = strtotime("+45 minutes");
-    $time = date('h:i', $express_delivery);
-}else {
-    $normal_delivery = strtotime("+2 hours");
-    $time = date('h:i', $normal_delivery);
+if (isset($_POST["products"])){
+    date_default_timezone_set("Europe/Brussels");
+    $totalValue = 0;
+    $order = [];
+    $msg ="Estimated delivery of your order";
+    if (isset($_POST["express_delivery"])){
+        $totalValue += 5;
+        $time = date('h:i', strtotime("+45 minutes"));
+
+    }else {
+        $time = date('h:i', strtotime("+2 hours"));
+
+    }
+  /*  foreach ($_POST["products"] as $i => $product){
+        $totalValue += intval($product[$i]["price"]);
+  }*/
+
 }
 
 function whatIsHappening()
@@ -128,9 +141,7 @@ whatIsHappening();
 
 
 //Calculating the bill
-$totalValue = "";
 
 
-setcookie("order", $totalValue, time() + 60);
 
 require 'form-view.php';
