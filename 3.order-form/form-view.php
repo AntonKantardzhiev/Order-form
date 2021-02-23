@@ -23,6 +23,10 @@
         </ul>
     </nav>
 
+    <?php foreach($errors AS $error):?>
+    <li><?php echo $error?></li>
+    <?php endforeach;?>
+
     <form method="post" action="<?php echo($_SERVER["PHP_SELF"]); ?>">
         <div class="form-row">
             <div class="form-group col-md-6">
@@ -41,14 +45,14 @@
                 <div class="form-group col-md-6">
                     <label for="street">Street:</label>
                     <input type="text" name="street" id="street" class="form-control"
-                           value="<?php echo isset($_POST["street"]) ? $_SESSION["street"] : ''; ?>">
+                           value="<?php echo isset($_SESSION["street"]) ? $_SESSION["street"] : ''; ?>">
                     <span style="color : red"><?php echo $street_Err ?></span>
 
                 </div>
                 <div class="form-group col-md-6">
                     <label for="street_number">Street number:</label>
                     <input type="text" id="street_number" name="street_number" class="form-control"
-                           value="<?php echo isset($_POST["street_number"]) ? $_SESSION["street_number"] : ''; ?>">
+                           value="<?php echo isset($_SESSION["street_number"]) ? $_SESSION["street_number"] : ''; ?>">
                     <span style="color : red"><?php echo $street_number_Err ?></span>
                 </div>
             </div>
@@ -56,13 +60,13 @@
                 <div class="form-group col-md-6">
                     <label for="city">City:</label>
                     <input type="text" id="city" name="city" class="form-control"
-                           value="<?php echo isset($_POST["city"]) ? $_SESSION["city"] : ''; ?>">
+                           value="<?php echo isset($_SESSION["city"]) ? $_SESSION["city"] : ''; ?>">
                     <span style="color : red"><?php echo $city_Err ?></span>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="zip_code">Zipcode</label>
                     <input type="text" id="zip_code" name="zip_code" class="form-control"
-                           value="<?php echo isset($_POST["zip_code"]) ? $_SESSION["zip_code"] : ''; ?>">
+                           value="<?php echo isset($_SESSION["zip_code"]) ? $_SESSION["zip_code"] : ''; ?>">
                     <span style="color : red"><?php echo $zip_code_Err ?></span>
                 </div>
             </div>
@@ -86,7 +90,7 @@
         <button type="submit" class="btn btn-primary" action="" >Order!</button>
     </form>
 
-    <footer>You already ordered <strong>&euro; <?php echo isset($totalValue) ? $totalValue :"" ?></strong> in food and drinks.<?php echo isset($time)? $time:"" ?></footer>
+    <footer>You already ordered <strong>&euro; <?php echo $totalValue ?? "" ?></strong> in food and drinks.<?php echo $time ?? "" ?></footer>
 
 </div>
 

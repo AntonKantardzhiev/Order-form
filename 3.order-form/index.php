@@ -4,11 +4,13 @@ declare(strict_types=1);
 //we are going to use session variables so we need to enable sessions
 
 session_start();
-const zip = 4;
-$name_Err = $email_Err = $street_Err = $street_number_Err = $city_Err = $zip_code_Err = "";
-$name = $email = $street = $street_number = $city = $zip_code = "";
+const ZIP = 4;
+const EXPRESS_DELIVIRY_COST = 5;
 
-if (!isset($_GET["food"])) {
+$name_Err = $email_Err = $street_Err = $street_number_Err = $city_Err = $zip_code_Err = "";
+ $street = $street_number = $city = $zip_code = "";
+
+if (!isset($_GET["food"]) || $_GET["food"] == 1) {
     $products = [
         ['name' => 'Club Ham', 'price' => 3.20],
         ['name' => 'Club Cheese', 'price' => 3],
@@ -16,15 +18,7 @@ if (!isset($_GET["food"])) {
         ['name' => 'Club Chicken', 'price' => 4],
         ['name' => 'Club Salmon', 'price' => 5]
     ];
-} else if ($_GET["food"] == 1) {
-    $products = [
-        ['name' => 'Club Ham', 'price' => 3.20],
-        ['name' => 'Club Cheese', 'price' => 3],
-        ['name' => 'Club Cheese & Ham', 'price' => 4],
-        ['name' => 'Club Chicken', 'price' => 4],
-        ['name' => 'Club Salmon', 'price' => 5]
-    ];
-} else if ($_GET["food"] == 0) {
+} else {
     $products = [
         ['name' => 'Cola', 'price' => 2],
         ['name' => 'Fanta', 'price' => 2],
@@ -33,39 +27,36 @@ if (!isset($_GET["food"])) {
     ];
 }
 
+function check(string $data) : string
+{
+    return trim(htmlspecialchars($data, ENT_NOQUOTES, "UTF-8"));
+}
 
-
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    function check(string $data)
-    {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data, ENT_NOQUOTES, "UTF-8");
-        return $data;
-    }
-
+$errors = [];
+if (isset($_POST["name"], $_POST["email"])) {
     if (empty($_POST["name"])) {
         $name_Err = "Name is required";
-    } else if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
+        $errors[] = $name_Err;
+    } else if (!preg_match("/^[a-zA-Z-' ]*$/", $_POST["name"])) {
         $name_Err = "* Invalid name";
+        $errors[] = $name_Err;
     } else {
-        $name = check($_POST["name"]);
-        $_SESSION["name"] = $name;
+        $_SESSION["name"] = check($_POST["name"]);
     }
 
     if (empty($_POST["email"])) {
         $email_Err = "Email is required";
+        $errors[] = $email_Err;
     } else if (!filter_var((check($_POST["email"])), FILTER_VALIDATE_EMAIL)) {
         $email_Err = "* Invalid email ";
+        $errors[] = $email_Err;
     } else {
-        $email = check($_POST["email"]);
-        $_SESSION["email"] = $email;
+        $_SESSION["email"] = check($_POST["email"]);
     }
 
     if (empty($_POST["street"])) {
         $street_Err = "Street is required";
-    } else if (!preg_match("/^[a-zA-Z-' ]*$/", $street)) {
+    } else if (!preg_match("/^[a-zA-Z-' ]*$/", $_POST["street"])) {
         $street_Err = "* Invalid street name";
     } else {
         $street = check($_POST["street"]);
@@ -83,16 +74,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($_POST["city"])) {
         $city_Err = "City is required";
-    } else if (!preg_match("/^[a-zA-Z-' ]*$/", $city)) {
+    } else if (!preg_match("/^[a-zA-Z-' ]*$/", $_POST["city"])) {
         $city_Err = "* Invalid city";
     } else {
-        $city = check($_POST["city"]);
-        $_SESSION["city"] = $city;
+        $_SESSION["city"] = check($_POST["city"]);
     }
 
     if (empty($_POST["zip_code"])) {
         $zip_code_Err = "Zipcode is required";
-    } else if (is_numeric(($_POST["zip_code"]))&&(strlen($_POST["zip_code"])== zip)) {
+    } else if (is_numeric(($_POST["zip_code"]))&&(strlen($_POST["zip_code"])== ZIP)) {
         $zip_code = check($_POST["zip_code"]);
         $_SESSION["zip_code"] = $zip_code;
     } else {
@@ -106,7 +96,7 @@ if (isset($_POST["products"])){
     $order = [];
     $msg ="Estimated delivery of your order";
     if (isset($_POST["express_delivery"])){
-        $totalValue += 5;
+        $totalValue += EXPRESS_DELIVIRY_COST;
         $time = date('h:i', strtotime("+45 minutes"));
 
     }else {
@@ -117,6 +107,11 @@ if (isset($_POST["products"])){
         $totalValue += intval($product[$i]["price"]);
   }*/
 
+    if(!count($errors)) {
+        echo 'You order has been recieved';
+    } else {
+        echo 'Errors found';
+    }
 }
 
 function whatIsHappening()
